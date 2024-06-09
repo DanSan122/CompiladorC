@@ -1,13 +1,12 @@
 #include <iostream>
 #include "scannerComp.cpp"
 #include "parserComp.cpp"
-#include "lexicalException.cpp"
-#include "syntaxException.cpp"
+
 
 int main()
 {
-	Scanner sc("input.isi");
-	Token token;
+	Scanner sc("imput.isi");
+	/*Token token;
 	while (true)
 	{
 		token = sc.nextToken();
@@ -19,27 +18,14 @@ int main()
 		{
 			break;
 		}
-	}
+	}*/
 	
 	Parser parser(sc);
 	
-	try
-	{
-		parser.E();
-		std::cout << "¡Compilación exitosa!" << std::endl;
+	try {
+		parser.parse(); 
+		std::cout << "Por fin compilo!" << std::endl;
+	} catch (...) {
+		std::cout << "Puros errores!" << std::endl;
 	}
-	catch (const LexicalException& e)
-	{
-		std::cout << "Error léxico: " << e.what() << std::endl;
-	}
-	catch (const SyntaxException& e)
-	{
-		std::cout << "Error sintáctico: " << e.what() << std::endl;
-	}
-	catch (const std::exception& e)
-	{
-		std::cout << "Error genérico: " << e.what() << std::endl;
-	}
-	
-	return 0;
 }

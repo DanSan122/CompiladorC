@@ -3,18 +3,16 @@
 #include <fstream>
 #include <string>
 #include "tokenComp.cpp"
-#include "lexicalException.cpp"
 
 class Scanner
 {
 private:
 	int line;
 	int column;
-	std::string content;
+	string content;
 	int pos;
-	
 public:
-	Scanner(std::string);
+	Scanner(string);
 	Token nextToken();
 	bool isDigit(char);
 	bool isChar(char);
@@ -26,22 +24,22 @@ public:
 	bool isEofChar(char);
 };
 
-Scanner::Scanner(std::string fileName)
+Scanner::Scanner(string fileName)
 {
 	line = 1;
 	column = 0;
-	std::ifstream file(fileName);
+	ifstream file(fileName);
 	
 	if (file.is_open())
 	{
-		std::string txtContent((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+		string txtContent((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
 		content = txtContent;
 		pos = 0;
 		file.close();
 	}
 	else
 	{
-		std::cerr << "Error al abrir el archivo\n";
+		cerr << "Error al abrir el archivo\n";
 	}
 }
 
@@ -53,7 +51,7 @@ Token Scanner::nextToken()
 	}
 	
 	int estado = 0;
-	std::string term;
+	string term;
 	
 	while (true)
 	{
@@ -80,7 +78,7 @@ Token Scanner::nextToken()
 			{
 				term += currentChar;
 				Token token;
-				token.setType(Token::tkOperator);
+				token.setType(token.tkOperator);
 				token.setText(term);
 				token.setLine(line);
 				token.setColumn(column - term.size());
@@ -89,7 +87,8 @@ Token Scanner::nextToken()
 			}
 			else
 			{
-				throw LexicalException("Simbolo no reconocido: " + currentChar);
+				cout << "Simbolo no reconocido.";
+				break;
 			}
 		}
 		else if (estado == 1)
@@ -106,7 +105,7 @@ Token Scanner::nextToken()
 					back();
 				}
 				Token token;
-				token.setType(Token::tkIdentifier);
+				token.setType(token.tkIdentifier);
 				token.setText(term);
 				token.setLine(line);
 				token.setColumn(column - term.size());
@@ -115,12 +114,13 @@ Token Scanner::nextToken()
 			}
 			else
 			{
-				throw LexicalException("Identificador mal formado");
+				cout << "Identificador mal formado";
+				break;
 			}
 		}
 		else if (estado == 2)
 		{
-			if (isDigit(currentChar) || currentChar == '.')
+			if (isDigit(currentChar) || !currentChar == '.')
 			{
 				estado = 2;
 				term += currentChar;
@@ -132,7 +132,7 @@ Token Scanner::nextToken()
 					back();
 				}
 				Token token;
-				token.setType(Token::tkNumber);
+				token.setType(token.tkNumber);
 				token.setText(term);
 				token.setLine(line);
 				token.setColumn(column - term.size());
@@ -141,11 +141,12 @@ Token Scanner::nextToken()
 			}
 			else
 			{
-				throw LexicalException("Numero no reconocido");
+				cout << "Numero no reconocido";
+				break;
 			}
 		}
 	}
-	return Token();
+	return 	Token();
 }
 
 bool Scanner::isDigit(char c)
@@ -160,7 +161,7 @@ bool Scanner::isChar(char c)
 
 bool Scanner::isOperator(char c)
 {
-	return c == '>' ||
+	return  c == '>' ||
 		c == '<' ||
 		c == '=' ||
 		c == '!' ||
@@ -177,11 +178,21 @@ bool Scanner::isSpace(char c)
 		line++;
 		column = 0;
 	}
-	return c == ' ' ||
+	return  c == ' ' ||
 		c == '\t' ||
 		c == '\n' ||
 		c == '\r';
 }
+
+/*bool Scanner::isKeywordStart(char c)
+{
+	return isChar(c); // Un identificador puede ser el comienzo de una palabra clave
+}*/
+
+/*bool Scanner::isStringStart(char c)
+{
+	return c == '"'; // Una cadena de texto comienza con "
+}*/
 
 char Scanner::nextChar()
 {
@@ -207,3 +218,59 @@ bool Scanner::isEofChar(char c)
 {
 	return c == '\0';
 }
+/*Token Scanner::recognizeKeyword()
+{
+	string word;
+	while (isChar(currentChar) || isDigit(currentChar))
+	{
+		word += currentChar;
+		currentChar = nextChar();
+	}
+	if (isKeyword(word))
+	{
+		Token token;
+		token.setType(Token::tkKeyword);
+		token.setText(word);
+		token.setLine(line);
+		token.setColumn(column - word.size());
+		return token;
+	}
+	else
+	{
+		// Si la palabra no es una palabra clave, se trata como un identificador
+		Token token;
+		token.setType(Token::tkIdentifier);
+		token.setText(word);
+		token.setLine(line);
+		token.setColumn(column - word.size());
+		return token;
+	}
+}
+
+Token Scanner::recognizeString()
+{
+	string text;
+	currentChar = nextChar(); // Ignora el primer "
+	while (currentChar != '"' && !isEofChar(currentChar))
+	{
+		text += currentChar;
+		currentChar = nextChar();
+	}
+	if (currentChar == '"')
+	{
+		Token token;
+		token.setType(Token::tkString);
+		token.setText(text);
+		token.setLine(line);
+		token.setColumn(column - text.size());
+		// Avanza al siguiente carácter después de "
+		currentChar = nextChar();
+		return token;
+	}
+	else
+	{
+		// Manejo de error: La cadena de texto no tiene un cierre
+		cout << "Error: Cadena de texto sin cierre." << endl;
+		exit(1);
+	}
+}*/

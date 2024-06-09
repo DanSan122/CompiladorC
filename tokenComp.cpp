@@ -1,3 +1,4 @@
+// tokenComp.cpp
 #pragma once
 #include <iostream>
 #include <string>
@@ -18,6 +19,9 @@ public:
 	static const int tkOperator = 2;
 	static const int tkPunctuation = 3;
 	static const int tkAssign = 4;
+	// Nuevos tipos de tokens
+	static const int tkKeyword = 5;
+	static const int tkString = 6;
 	
 	static const string tkText[];
 	
@@ -37,7 +41,8 @@ public:
 };
 
 const string Token::tkText[] = {
-	"IDENTIFICADOR", "NUMERO", "OPERADOR", "PUNTUACION", "ASIGNACION"
+	"IDENTIFICADOR", "NUMERO", "OPERADOR", "PUNTUACION", "ASIGNACION",
+		"PALABRA_CLAVE", "CADENA"  // Nombres de los nuevos tipos de tokens
 };
 
 Token::Token()
